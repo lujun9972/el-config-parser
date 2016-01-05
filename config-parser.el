@@ -39,12 +39,15 @@
                              section)
                             ((listp section)
                              (car section)))))
-    (insert (format "[%s]\n" section-name))))
+    (unless (string-equal section-name "")
+      (insert (format "[%s]" section-name))
+      (newline))))
 
 (defun config-parser--insert-option (option sep)
   (let ((key (car option))
         (value (cdr option)))
-    (insert (format "%s%s%s\n" key sep value))))
+    (insert (format "%s%s%s" key sep value))
+    (newline)))
 
 (defun config-parser-write (file config-data &optional sep)
   (let* ((sep (or sep ":")))
@@ -56,4 +59,4 @@
           (dolist (option options)
             (config-parser--insert-option option sep)))))))
 
-(config-parser-write "retest.cfg" (config-parser-read "test.cfg" "="))
+;; (config-parser-write "retest.cfg" (config-parser-read "test.cfg" "="))
