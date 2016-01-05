@@ -1,16 +1,20 @@
 (require 'cl-lib)
 
 (defun config-parser--parse-section (line)
+  "Parse \"[section]\" to '(\"section\")"
   (when (string-match "^\\[\\([^]]+\\)\\]$" line)
     (list (match-string 1 line))))
 
 (defun config-parser--parse-option (line sep)
+  "Parse \"key=val\" to '(\"key\". \"val\"). Here assume SEP is ="
   (when (string-match (format "^\\([^%s[:space:]]+\\)[[:space:]]*%s[[:space:]]*\\(.+\\)$" sep sep) line)
     (cons (match-string 1 line)
           (match-string 2 line))))
 
-(config-parser-read "test.cfg" "=")
 (defun config-parser-read (file &optional sep)
+  "Parse the cfg FILE, the result is an alist which car element is the section and cdr element is options in the section
+
+options is also an alist like '(key . value) "
   (let* ((sep (or sep ":"))
          (file-content (with-temp-buffer
                          (insert-file-contents file)
@@ -35,6 +39,7 @@
     (reverse result)))
 
 (defun config-parser--insert-section (section)
+  "Insert the SECTION data"
   (let ((section-name (cond ((stringp section)
                              section)
                             ((listp section)
@@ -44,12 +49,14 @@
       (newline))))
 
 (defun config-parser--insert-option (option sep)
+  "Insert the OPTION data with SEP as the delimiter"
   (let ((key (car option))
         (value (cdr option)))
     (insert (format "%s%s%s" key sep value))
     (newline)))
 
 (defun config-parser-write (file config-data &optional sep)
+  "Insert CONFIG-DATA into FILE with SEP as the delimiter"
   (let* ((sep (or sep ":")))
     (with-temp-file file
       (dolist (section config-data)
