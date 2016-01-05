@@ -33,3 +33,27 @@
             (t (error "invalid line:%s" line))))
     (push (reverse section) result)
     (reverse result)))
+
+(defun config-parser--insert-section (section)
+  (let ((section-name (cond ((stringp section)
+                             section)
+                            ((listp section)
+                             (car section)))))
+    (insert (format "[%s]\n" section-name))))
+
+(defun config-parser--insert-option (option sep)
+  (let ((key (car option))
+        (value (cdr option)))
+    (insert (format "%s%s%s\n" key sep value))))
+
+(defun config-parser-write (file config-data &optional sep)
+  (let* ((sep (or sep ":")))
+    (with-temp-file file
+      (dolist (section config-data)
+        (let ((section-name (car section))
+              (options (cdr section)))
+          (config-parser--insert-section section-name)
+          (dolist (option options)
+            (config-parser--insert-option option sep)))))))
+
+(config-parser-write "retest.cfg" (config-parser-read "test.cfg" "="))
