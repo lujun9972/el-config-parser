@@ -1,4 +1,4 @@
-;;; config-parser.el --- a library to parse config file
+;;; config-parser.el --- a library for parsing config file
 
 ;; Copyright (C) 2004-2015 Free Software Foundation, Inc.
 
@@ -31,7 +31,7 @@
 
 ;;; Commentary:
 
-;; config-parser is a library to parse config file with similar interface of config parser module in python
+;; config-parser is a library for parsing config file with similar interface of config parser module in python
 
 ;;; Code:
 (require 'cl-lib)
@@ -64,7 +64,7 @@ options is also an alist like '(key . value) "
                              (insert-file-contents file)
                              (buffer-string)))
              (file-lines (mapcar #'string-trim (split-string file-content "[\r\n]+")))
-             (valid-file-lines (remove-if (lambda (line)
+             (valid-file-lines (cl-remove-if (lambda (line)
                                             (or (string-equal line "")
                                                 (string-prefix-p "#" line)
                                                 (string-prefix-p ";" line)))
