@@ -1,3 +1,39 @@
+;;; config-parser.el --- a library to parse config file
+
+;; Copyright (C) 2004-2015 Free Software Foundation, Inc.
+
+;; Author: DarkSun <lujun9972@gmail.com>
+;; Created: 2016-01-06
+;; Version: 0.1
+;; Keywords: convenience, config
+;; Package-Requires: ((cl-lib "0.5"))
+;; URL: https://github.com/lujun9972/el-config-parser
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Source code
+;;
+;; config-parser's code can be found here:
+;;   http://github.com/lujun9972/el-config-parser
+
+;;; Commentary:
+
+;; config-parser is a library to parse config file with similar interface of config parser module in python
+
+;;; Code:
 (require 'cl-lib)
 
 (defun config-parser--parse-section (line)
@@ -138,3 +174,5 @@ otherwise for t).  Returns nil or otherwise. "
     (when option-data
       (setf (cdr option-data) value)))
   config-data)
+
+;;; config-parser.el ends here
