@@ -109,8 +109,6 @@ options is also an alist like '(key . value) "
           (dolist (option options)
             (config-parser--insert-option option sep)))))))
 
-;; (config-parser-write "retest.cfg" (config-parser-read "test.cfg" "="))
-
 (defun config-parser-sections (config-data)
   "Return all the configuration section names"
   (mapcar #'car config-data))
@@ -132,6 +130,10 @@ options is also an alist like '(key . value) "
 (defun config-parser-has-option (config-data section option)
   "Return whether the given optioin exists in the given section"
   (member option (config-parser-options config-data section)))
+
+(defun config-parser-get-section (config-data section)
+  "Return section data"
+  (assoc section config-data))
 
 (defun config-parser-get (config-data section option)
   "Return a string value for the named option"
@@ -168,12 +170,33 @@ otherwise for t).  Returns nil or otherwise. "
                                              (cdr section-data)))))
   config-data)
 
-(defun config-parser-set! (config-data section option value)
+(defun config-parser-make-section (section &rest options)
+  ""
+  (cl-check-type section string)
+  (append (list section) options))
+
+(defun config-parser-make-option (key value)
+  ""
+  (cons (format "%s" key) (format "%s" value)))
+
+(defun config-parser-set! (config-data section option value &optional create-p)
   "set the given option"
-  (let* ((options-data (config-parser-items config-data section))
-         (option-data (assoc option options-data)))
-    (when option-data
-      (setf (cdr option-data) value)))
+  (if (null config-data)
+      (setq config-data
+            (when create-p
+              (list (config-parser-make-section section
+                                                (config-parser-make-option option value)))))
+    (if (and create-p
+             (not (config-parser-has-option config-data section option)))
+        (progn
+          (let ((new-option (config-parser-make-option option value)))
+            (if (config-parser-has-section config-data section)
+                (nconc (config-parser-get-section config-data section) (list new-option))
+              (nconc config-data (list (config-parser-make-section section new-option))))))
+      (let* ((options-data (config-parser-items config-data section))
+             (option-data (assoc option options-data)))
+        (when option-data
+          (setf (cdr option-data) value)))))
   config-data)
 
 ;;; config-parser.el ends here
