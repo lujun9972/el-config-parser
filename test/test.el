@@ -1,11 +1,17 @@
 (require 'ert)
 (load "~/el-cfg-parser/config-parser.el")
-(defvar config-data nil)
+(defvar config-data '(("" ("key1" . "1") ("key2" . "value2"))
+                      ("short" ("k1" . "off") ("k2" . "v2"))))
+(ert-deftest test-write ()
+  "write config-data to \"test-read.cfg\""
+  (config-parser-write "test-read.cfg" config-data)
+  (should (equal (config-parser-read "test-read.cfg")
+                 config-data)))
+
 (ert-deftest test-read ()
   "read and parse \"test-read.cfg\""
-  (should (equal (setq config-data (config-parser-read "test-read.cfg"))
-                 '(("" ("key1" . "1") ("key2" . "value2"))
-                   ("short" ("k1" . "off") ("k2" . "v2"))))))
+  (should (equal (config-parser-read "test-read.cfg")
+                 config-data)))
 
 (ert-deftest test-sections ()
   ""
@@ -102,4 +108,14 @@
 
     (setq config-data-copy (config-parser-set! config-data-copy "short" "k2" "new-k2"))
     (should (equal (config-parser-get config-data-copy "short" "k2")
-                   "new-k2"))))
+                   "new-k2"))
+
+    (setq config-data-copy (config-parser-set! config-data-copy "short" "non-exist-option" "new-value" t))
+    (should (equal (config-parser-get config-data-copy "short" "non-exist-option")
+                   "new-value"))
+    (setq config-data-copy (config-parser-set! config-data-copy "non-exist-section" "non-exist-option" "new-value" t))
+    (should (equal (config-parser-get config-data-copy "non-exist-section" "non-exist-option")
+                   "new-value"))
+    ))
+
+;; (setq config-data-copy (copy-tree config-data))
