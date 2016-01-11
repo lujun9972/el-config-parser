@@ -48,6 +48,7 @@
     (cons (match-string 1 line)
           (match-string 2 line))))
 
+;;; 
 (defun config-parser-read (files &optional sep)
   "Read and parse a file(FILES is a string) or a list of files(FILES is a list of string), the result is an alist which car element is the section and cdr element is options in the section
 
@@ -98,6 +99,7 @@ options is also an alist like '(key . value) "
     (insert (format "%s%s%s" key sep value))
     (newline)))
 
+;;;###autoload
 (defun config-parser-write (file config-data &optional sep)
   "Write CONFIG-DATA in FILE with SEP as the delimiter"
   (let* ((sep (or sep ":")))
@@ -109,42 +111,51 @@ options is also an alist like '(key . value) "
           (dolist (option options)
             (config-parser--insert-option option sep)))))))
 
+;;;###autoload
 (defun config-parser-sections (config-data)
   "Return all the configuration section names"
   (mapcar #'car config-data))
 
+;;;###autoload
 (defun config-parser-has-section (config-data section)
   "Return whether the given SECTION exists"
   (member section (config-parser-sections config-data)))
 
+;;;###autoload
 (defun config-parser-items (config-data section)
   "return a list (name . value) for each option in the section. "
   (let ((section-data (assoc section config-data)))
     (cdr section-data)))
 
+;;;###autoload
 (defun config-parser-options (config-data section)
   "Return list of configuration options for the named SECTOIN"
   (let* ((options-data (config-parser-items config-data section)))
     (mapcar #'car options-data)))
 
+;;;###autoload
 (defun config-parser-has-option (config-data section option)
   "Return whether the given optioin exists in the given section"
   (member option (config-parser-options config-data section)))
 
+;;;###autoload
 (defun config-parser-get-section (config-data section)
   "Return section data"
   (assoc section config-data))
 
+;;;###autoload
 (defun config-parser-get (config-data section option)
   "Return a string value for the named option"
   (let* ((options-data (config-parser-items config-data section))
          (option-data (assoc option options-data)))
     (cdr option-data)))
 
+;;;###autoload
 (defun config-parser-get-number (config-data section option &optional base)
   "like `config-parser-get' but convert valut to an number. If BASE, interpret STRING as a number in that base, default to be 10"
   (ignore-errors (string-to-number (config-parser-get config-data section option) base)))
 
+;;;###autoload
 (defun config-parser-get-boolean (config-data section option)
   "like `config-parser-get' but convert valut to a boolean.
 
@@ -155,12 +166,14 @@ otherwise for t).  Returns nil or otherwise. "
         nil
       value)))
 
+;;;###autoload
 (defun config-parser-delete-section! (config-data section)
   "remove the given file section and all its options"
   (cl-delete-if (lambda (section-data)
                   (string-equal section (car section-data)))
                 config-data))
 
+;;;###autoload
 (defun config-parser-delete-option! (config-data section option)
   "Remove the given option from the given section"
   (when (config-parser-has-option config-data section option)
@@ -170,15 +183,18 @@ otherwise for t).  Returns nil or otherwise. "
                                              (cdr section-data)))))
   config-data)
 
+;;;###autoload
 (defun config-parser-make-section (section &rest options)
   ""
   (cl-check-type section string)
   (append (list section) options))
 
+;;;###autoload
 (defun config-parser-make-option (key value)
   ""
   (cons (format "%s" key) (format "%s" value)))
 
+;;;###autoload
 (defun config-parser-set! (config-data section option value &optional create-p)
   "set the given option"
   (if (null config-data)
