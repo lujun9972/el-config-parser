@@ -48,7 +48,7 @@
     (cons (match-string 1 line)
           (match-string 2 line))))
 
-;;; 
+;;;###autoload
 (defun config-parser-read (files &optional sep)
   "Read and parse a file(FILES is a string) or a list of files(FILES is a list of string), the result is an alist which car element is the section and cdr element is options in the section
 
