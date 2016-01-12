@@ -199,4 +199,6 @@ otherwise for t).  Returns nil or otherwise. "
           (setf (cdr option-data) value)))))
   config-data)
 
+(provide 'config-parser)
+
 ;;; config-parser.el ends here
